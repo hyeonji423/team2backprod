@@ -17,9 +17,6 @@ from typing import Dict, Any
 from langchain.schema import Document
 import shutil
 
-
-
-
 # 시작 시간 기록
 # start_time = time.time()
 
