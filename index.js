@@ -1,5 +1,6 @@
 const PORT = 8000;
 
+
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
@@ -12,43 +13,63 @@ const swaggerUi = require("swagger-ui-express");
 const YAML = require("yamljs");
 const swaggerDocument = YAML.load("./swagger.yaml");
 
+
 const app = express();
+
 
 app.use(cors());
 app.use(express.json());
 
 
-
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 
 app.get("/", (req, res) => {
   res.send("auth server test running");
 });
 
-app.use("/auth", authRouter); // http://localhost:8000/auth
-app.use("/myPage", myPageRouter); // http://localhost:8000/myPage
+
+app.use("/auth", authRouter);
+app.use("/myPage", myPageRouter);
 app.use("/medicine", searchRouter);
 app.use("/email", emailRouter);
 
-// -- 이 사이에 챗봇 경로 추가해 주세요
+
+// 챗봇 경로
+
 
 app.post("/chat1", (request, response) => {
   try {
     const { question } = request.body;
-    console.log(question);
+    // console.log(question);
 
+
+    // const scriptPath = path.join(__dirname, "chat1.py");
+    // const phythonPath = "python";
     const scriptPath = path.join(__dirname, "chat1.py");
-    const phythonPath = "python";
+    console.log(scriptPath);
+    const phythonPath = path.join(
+      "/home/ubuntu/miniconda",
+      "envs",
+      "myenv",
+      "bin",
+      "python3"
+    );
+    console.log(phythonPath);
+
 
     const result = spawn(phythonPath, [scriptPath, question]);
 
+
     let answer = "";
     let hasResponded = false;
+
 
     // 파이썬 스크립트의 출력을 수신하는 이벤트 리스너
     result.stdout.on("data", (data) => {
       answer += data.toString();
     });
+
 
     // 파이썬 스크립트의 오류를 수신하는 이벤트 리스너
     result.stderr.on("data", (data) => {
@@ -62,6 +83,7 @@ app.post("/chat1", (request, response) => {
         });
       }
     });
+
 
     // 파이썬 스크립트의 종료를 수신하는 이벤트 리스너
     result.on("close", (code) => {
@@ -86,4 +108,8 @@ app.post("/chat1", (request, response) => {
 });
 // --
 
+
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+
+
+
