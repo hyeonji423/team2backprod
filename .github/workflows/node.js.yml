@@ -66,3 +66,4 @@ jobs:
           eval "$($HOME/miniconda/bin/conda shell.bash hook)"
           conda activate myenv
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - run: pm2 restart BackendAPI 
